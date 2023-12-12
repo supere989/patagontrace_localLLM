@@ -107,6 +107,17 @@ def main():
     pcap_overview = None
 
     if args.pcap and args.protocol:
+    print(Fore.YELLOW + "Your ASCII Art Here" + Style.RESET_ALL)  # ASCII Art
+    initial_prompt = f"Provide an overview of the pcap file {args.pcap} with protocol {args.protocol}"
+    response = openai.ChatCompletion.create(model=args.model, messages=[{"role": "system", "content": initial_prompt}], temperature=args.temperature)
+    pcap_overview = response.choices[0].message['content'].strip()
+
+    if pcap_overview:
+        print(Fore.CYAN + pcap_overview + Style.RESET_ALL + "\n")
+
+    display_prompt_menu()
+    
+    if args.pcap and args.protocol:
         initial_prompt = f"Provide an overview of the pcap file {args.pcap} with protocol {args.protocol}"
         response = openai.Completion.create(model=args.model, prompt=initial_prompt, temperature=args.temperature)
         pcap_overview = response.choices[0].text.strip()
