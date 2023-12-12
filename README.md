@@ -1,4 +1,4 @@
-## Patagontracer in your terminal
+## AI PCAP analyzer in your terminal
 
 PCAP analyzer integrated with OpenAI's ChatGPT into your shell.
 
