@@ -1,9 +1,14 @@
-import subprocess
-import sys
 import openai
-import argparse
+import sys
+import random
+import string
 import colorama
-from colorama import Fore, Style
+import shutil
+import argparse
+import readline
+from src.extras import greeting, lamp
+from src.prompts import prompts
+from colorama import Fore, Back, Style
 
 # --- PCAP Analyzer Functions ---
 def run_tshark_cmd(cmd):
