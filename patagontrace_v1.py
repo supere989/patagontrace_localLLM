@@ -42,47 +42,97 @@ def pcap_to_txt(input_file, protocol, imsi, session_id):
 
 # --- CLI Chat Function ---
 def main():
-    parser = argparse.ArgumentParser(description="Genie: Chat with ChatGPT")
-    parser.add_argument("--model", default="gpt-3.5-turbo", choices=["gpt-4", "gpt-3.5-turbo", "code-davinci-002", "text-davinci-003"], help="Choose the API model to use")
-    parser.add_argument("--temperature", default=0.7, type=float, help="Control the randomness of the response")
-    parser.add_argument("--pcap", help="Path to pcap file for analysis")
-    parser.add_argument("--protocol", help="Protocol used in pcap file")
-    args = parser.parse_args()
-
     openai.api_key = "YOUR_API_KEY"
-    messages = []
+
+    def parse_args():
+        parser = argparse.ArgumentParser(description="Genie: Chat with ChatGPT")
+        parser.add_argument("--model", default="gpt-3.5-turbo", choices=["gpt-4", "gpt-3.5-turbo", "code-davinci-002", "text-davinci-003"], help="Choose the API model to use")
+        parser.add_argument("--temperature", default=0.7, type=float, help="Control the randomness of the response")
+        parser.add_argument("question", nargs="*", help="Optional question for non-interactive mode")
+        parser.add_argument("--pcap", help="Path to pcap file for analysis")
+        parser.add_argument("--protocol", help="Protocol used in pcap file")
+        return parser.parse_args()
+
+    def display_prompt_menu():
+        term_width = shutil.get_terminal_size((80, 20)).columns
+        num_columns = 3
+        column_width = term_width // num_columns
+        formatted_prompts = []
+
+        for i, prompt in enumerate(prompts):
+            formatted_prompt = f"{i + 1} - {prompt.split(':')[0]}"
+            padded_prompt = formatted_prompt.center(column_width)
+            formatted_prompts.append(padded_prompt)
+
+        print(
+            Fore.YELLOW
+            + "Ask a question, choose a prompt, or 'q' to quit:".center(term_width)
+            + "\n"
+        )
+        print(Fore.YELLOW + "=" * term_width)
+        for i, formatted_prompt in enumerate(formatted_prompts):
+            print(Fore.YELLOW + formatted_prompt, end="")
+            if (i + 1) % num_columns == 0 and i != len(formatted_prompts) - 1:
+                print()
+        print(Fore.YELLOW + "\n" + "=" * term_width + Style.RESET_ALL)
+
+    def center_multiline_string(s):
+        term_width = shutil.get_terminal_size((80, 20)).columns
+        centered_lines = []
+
+        for line in s.split("\n"):
+            padding_left = (term_width - len(line)) // 2
+            centered_line = " " * padding_left + line
+            centered_lines.append(centered_line)
+
+        return "\n".join(centered_lines)
+
+    def get_user_input(prompt):
+        try:
+            return input(prompt)
+        except (EOFError, KeyboardInterrupt):
+            return "q"
+
+    def print_centered_no_newline(text):
+        term_width = shutil.get_terminal_size((80, 20)).columns
+        padding_left = (term_width - len(text)) // 2
+        print(" " * padding_left + text, end="")
+        
+    args = parse_args()
+    pcap_overview = None
 
     if args.pcap and args.protocol:
-        # PCAP Analysis Mode
-        initial_prompt = "Provide an overview of this pcap file: " + args.pcap + " with protocol " + args.protocol
-        messages.append({"role": "user", "content": initial_prompt})
+        initial_prompt = f"Provide an overview of the pcap file {args.pcap} with protocol {args.protocol}"
+        response = openai.Completion.create(model=args.model, prompt=initial_prompt, temperature=args.temperature)
+        pcap_overview = response.choices[0].text.strip()
 
-        response = openai.ChatCompletion.create(model=args.model, messages=messages, temperature=args.temperature)
-        overview_reply = response["choices"][0]["message"]["content"]
-        messages.append({"role": "assistant", "content": overview_reply})
-        print(Fore.YELLOW + "\nGenie: " + overview_reply + "\n")
+    if args.question:
+        prompt = " ".join(args.question).rstrip(string.punctuation)
     else:
-        # Regular Chat Mode
-        print(Fore.BLUE + "Enter your question or 'q' to quit: ", end="")
-        user_input = input()
-        if user_input.lower() in ['q', 'quit']:
-            print(Fore.YELLOW + "Exiting Genie chat.")
-            sys.exit(0)
-        messages.append({"role": "user", "content": user_input})
+        print(Fore.YELLOW + center_multiline_string(lamp))
+        if pcap_overview:
+            print(Fore.YELLOW + center_multiline_string(pcap_overview) + "\n")
+        
+        display_prompt_menu()
+        print_centered_no_newline(Fore.BLUE + "You: ")
+        user_input = get_user_input(Fore.BLUE + "")
+        prompt = user_input.strip() if user_input.strip() else prompts[0]
 
+    messages = []
     while True:
+        if prompt.lower() in ["quit", "q", "bye"]:
+            print(Fore.YELLOW + "\nGenie: Farewell, master. Until you drag me out of bed again...\n")
+            break
+
+        messages.append({"role": "user", "content": prompt})
         response = openai.ChatCompletion.create(model=args.model, messages=messages, temperature=args.temperature)
-        reply = response["choices"][0]["message"]["content"]
+        reply = response.choices[0].message.content
 
         messages.append({"role": "assistant", "content": reply})
         print(Fore.YELLOW + "\nGenie: " + reply + "\n")
 
-        print(Fore.BLUE + "Your turn: ", end="")
-        user_input = input()
-        if user_input.lower() in ['q', 'quit']:
-            print(Fore.YELLOW + "Exiting Genie chat.")
-            break
-        messages.append({"role": "user", "content": user_input})
+        print_centered_no_newline(Fore.BLUE + "You: ")
+        prompt = get_user_input(Fore.BLUE + "")
 
 if __name__ == "__main__":
     main()
