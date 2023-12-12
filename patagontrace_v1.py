@@ -112,7 +112,8 @@ def main():
         print(Fore.YELLOW + center_multiline_string(lamp))
         if pcap_overview:
             print(Fore.YELLOW + center_multiline_string(pcap_overview) + "\n")
-        
+        if pcap_overview:
+            print(Fore.CYAN + pcap_overview + Style.RESET_ALL + "\n")
         display_prompt_menu()
         print_centered_no_newline(Fore.BLUE + "You: ")
         user_input = get_user_input(Fore.BLUE + "")
