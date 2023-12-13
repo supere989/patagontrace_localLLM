@@ -177,7 +177,7 @@ def print_centered_no_newline(text):
 
 # --- CLI Chat Function ---
 def main():
-    openai.api_key = "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"
+    openai.api_key = ""
 
     def parse_args():
         parser = argparse.ArgumentParser(description="Patagontrace: Analyze your pcap with ChatGPT")
