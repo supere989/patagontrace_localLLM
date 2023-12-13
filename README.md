@@ -34,6 +34,8 @@ Using your chosen alias you can call it from shell and pass the pcap name and th
 
 ```patagontrace --pcap ../dia-links.pcap --protocol diameter```
 
+```patagontrace --pcap ../sig-links.pcap --protocol sigtran```
+
 The default model used is `gpt-3.5-turbo` for a more fluent experience as its replies are much faster and API pricing is significantly cheaper.
 
 You can switch API model using the `--model` argument (run without `--model` to use the default model) if you'd like to to use gpt-4:
