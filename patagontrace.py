@@ -205,7 +205,7 @@ def main():
                        f"2) Identified Concerns: Issues in pcap.\n"
                        f"3) Troubleshooting Suggestions: Steps to resolve issues.\n\n"
                        f"{pcap_text}")
-    print(initial_analysis_prompt)
+    #print(initial_analysis_prompt)
     initial_response = openai.ChatCompletion.create(model=args.model, messages=[{"role": "system", "content": initial_analysis_prompt}], temperature=args.temperature)
     initial_analysis_overview = initial_response.choices[0].message['content'].strip()
     print(Fore.CYAN + initial_analysis_overview + Style.RESET_ALL + "\n")
@@ -257,7 +257,7 @@ def main():
             else:
                 combined_prompt = f"{chosen_prompt} Protocol: {args.protocol} {filtered_pcap_text}"
 
-            print(combined_prompt)
+            #print(combined_prompt)
             messages = [{"role": "user", "content": combined_prompt}]
             response = openai.ChatCompletion.create(model=args.model, messages=messages, temperature=args.temperature)
             reply = response.choices[0].message['content']
