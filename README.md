@@ -2,7 +2,7 @@
 
 PCAP analyzer integrated with OpenAI's ChatGPT into your shell.
 
-![patagontrace](https://ibb.co/Rhp1PbJ)
+https://ibb.co/Rhp1PbJ
 
 ### Description
 
