@@ -231,7 +231,7 @@ def main():
         elif filter_choice == "4":
             filtered_pcap_text = pcap_text
         elif filter_choice.lower() in ["quit", "q", "bye"]:
-            print(Fore.YELLOW + "\nPatagontrace: In case I don’t see ya, good afternoon, good evening, and good night!\n")
+            print(Fore.WHITE + "\nPatagontrace: In case I don’t see ya, good afternoon, good evening, and good night!\n")
             break
         else:
             print(Fore.RED + "Invalid choice. Please try again." + Style.RESET_ALL)
