@@ -58,5 +58,3 @@ Data Usage: The data sent to ChatGPT may be used by OpenAI to improve the perfor
 It is the user's responsibility to ensure that the use of this tool and ChatGPT complies with applicable data protection laws and organizational policies.
 Users should be aware of the data they are sharing and should anonymize any sensitive or personally identifiable information before analysis.
 
-### Disclaimer
-The developers of this tool are not responsible for any data breaches or leaks that may occur due to the use of ChatGPT. Users should use this tool at their own risk and ensure they are comfortable with the data being shared with an external service.
