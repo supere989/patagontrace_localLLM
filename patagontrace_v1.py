@@ -75,28 +75,28 @@ def main():
         parser.add_argument("--protocol", help="Protocol used in pcap file")
         return parser.parse_args()
         
-def display_prompt_menu():
-        term_width = shutil.get_terminal_size((80, 20)).columns
-        num_columns = 3
-        column_width = term_width // num_columns
-        formatted_prompts = []
+    def display_prompt_menu():
+            term_width = shutil.get_terminal_size((80, 20)).columns
+            num_columns = 3
+            column_width = term_width // num_columns
+            formatted_prompts = []
 
-        for i, prompt in enumerate(prompts):
-            formatted_prompt = f"{i + 1} - {prompt.split(':')[0]}"
-            padded_prompt = formatted_prompt.center(column_width)
-            formatted_prompts.append(padded_prompt)
+            for i, prompt in enumerate(prompts):
+                formatted_prompt = f"{i + 1} - {prompt.split(':')[0]}"
+                padded_prompt = formatted_prompt.center(column_width)
+                formatted_prompts.append(padded_prompt)
 
-        print(
-            Fore.YELLOW
-            + "Ask a question, choose a prompt, or 'q' to quit:".center(term_width)
-            + "\n"
-        )
-        print(Fore.YELLOW + "=" * term_width)
-        for i, formatted_prompt in enumerate(formatted_prompts):
-            print(Fore.YELLOW + formatted_prompt, end="")
-            if (i + 1) % num_columns == 0 and i != len(formatted_prompts) - 1:
-                print()
-        print(Fore.YELLOW + "\n" + "=" * term_width + Style.RESET_ALL)
+            print(
+                Fore.YELLOW
+                + "Ask a question, choose a prompt, or 'q' to quit:".center(term_width)
+                + "\n"
+            )
+            print(Fore.YELLOW + "=" * term_width)
+            for i, formatted_prompt in enumerate(formatted_prompts):
+                print(Fore.YELLOW + formatted_prompt, end="")
+                if (i + 1) % num_columns == 0 and i != len(formatted_prompts) - 1:
+                    print()
+            print(Fore.YELLOW + "\n" + "=" * term_width + Style.RESET_ALL)
 
     def center_multiline_string(s):
         term_width = shutil.get_terminal_size((80, 20)).columns
