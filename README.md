@@ -2,7 +2,9 @@
 
 PCAP analyzer integrated with OpenAI's ChatGPT into your shell.
 
-https://ibb.co/Rhp1PbJ
+
+[![Alt text for your image]([https://link-to-your-image.jpg](https://ibb.co/Rhp1PbJ))](URL-to-navigate-on-click)
+
 
 ### Description
 
@@ -46,9 +48,7 @@ You can switch temperature using the `--temp` argument (run without `--temp` to 
 
 To end the interactive chat, use either `bye`,`quit`,`q` or `ctrl+c`.
 
-
 ### Data Confidentiality and Privacy
-Interaction with ChatGPT
 This tool utilizes OpenAI's ChatGPT to analyze network traffic data extracted from pcap files. It's important to understand that when using this tool, the data you provide (such as IP addresses, IMSIs, MSISDNs, and other network details) is sent to ChatGPT for analysis.
 
 ### Data Handling
