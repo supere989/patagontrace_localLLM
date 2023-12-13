@@ -74,7 +74,52 @@ def main():
         parser.add_argument("--pcap", help="Path to pcap file for analysis")
         parser.add_argument("--protocol", help="Protocol used in pcap file")
         return parser.parse_args()
+        
+def display_prompt_menu():
+        term_width = shutil.get_terminal_size((80, 20)).columns
+        num_columns = 3
+        column_width = term_width // num_columns
+        formatted_prompts = []
 
+        for i, prompt in enumerate(prompts):
+            formatted_prompt = f"{i + 1} - {prompt.split(':')[0]}"
+            padded_prompt = formatted_prompt.center(column_width)
+            formatted_prompts.append(padded_prompt)
+
+        print(
+            Fore.YELLOW
+            + "Ask a question, choose a prompt, or 'q' to quit:".center(term_width)
+            + "\n"
+        )
+        print(Fore.YELLOW + "=" * term_width)
+        for i, formatted_prompt in enumerate(formatted_prompts):
+            print(Fore.YELLOW + formatted_prompt, end="")
+            if (i + 1) % num_columns == 0 and i != len(formatted_prompts) - 1:
+                print()
+        print(Fore.YELLOW + "\n" + "=" * term_width + Style.RESET_ALL)
+
+    def center_multiline_string(s):
+        term_width = shutil.get_terminal_size((80, 20)).columns
+        centered_lines = []
+
+        for line in s.split("\n"):
+            padding_left = (term_width - len(line)) // 2
+            centered_line = " " * padding_left + line
+            centered_lines.append(centered_line)
+
+        return "\n".join(centered_lines)
+
+    def get_user_input(prompt):
+        try:
+            return input(prompt)
+        except (EOFError, KeyboardInterrupt):
+            return "q"
+
+    def print_centered_no_newline(text):
+        term_width = shutil.get_terminal_size((80, 20)).columns
+        padding_left = (term_width - len(text)) // 2
+        print(" " * padding_left + text, end="")
+        
     args = parse_args()
     
     if args.pcap and args.protocol:
