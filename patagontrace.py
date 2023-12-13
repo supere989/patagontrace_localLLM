@@ -37,11 +37,11 @@ def pcap_to_txt(input_file, protocol):
         print("Error running tshark command or tshark not found.")
         return ""
 
-    # Join the lines and trim to 3000 characters
+    # Join the lines and trim to 5000 characters
     result_text = ' '.join(result)
-    if len(result_text) > 3000:
-        result_text = result_text[:3000]
-        print("Trimming pcap text to 3000 characters for AI processing.")
+    if len(result_text) > 5000:
+        result_text = result_text[:5000]
+        print("Trimming pcap text to 5000 characters for AI processing.")
     return result_text
 
 # Function to filter pcap based on user choice
@@ -77,9 +77,9 @@ def filtered_pcap_to_txt(input_file, protocol, filter_type, filter_value):
         result = run_tshark_cmd(cmd)
         if result:
             result_text = ' '.join(result)
-            if len(result_text) > 3000:
-                result_text = result_text[:3000] + "..."
-                print("Trimming pcap text to 3000 characters for AI processing.")
+            if len(result_text) > 5000:
+                result_text = result_text[:5000] + "..."
+                print("Trimming pcap text to 5000 characters for AI processing.")
             return result_text
         else:
             return ""
