@@ -126,7 +126,7 @@ def display_main_menu():
         if (i + 1) % num_columns == 0 and i != len(formatted_options) - 1:
             print()
     print(Fore.YELLOW + "\n" + "=" * term_width + Style.RESET_ALL)
-    
+
 
 def display_prompt_menu():
     term_width = shutil.get_terminal_size((80, 20)).columns
@@ -173,8 +173,8 @@ def print_centered_no_newline(text):
     term_width = shutil.get_terminal_size((80, 20)).columns
     padding_left = (term_width - len(text)) // 2
     print(" " * padding_left + text, end="")
-    
-        
+
+
 # --- CLI Chat Function ---
 def main():
     openai.api_key = "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"
@@ -209,7 +209,7 @@ def main():
     initial_response = openai.ChatCompletion.create(model=args.model, messages=[{"role": "system", "content": initial_analysis_prompt}], temperature=args.temperature)
     initial_analysis_overview = initial_response.choices[0].message['content'].strip()
     print(Fore.CYAN + initial_analysis_overview + Style.RESET_ALL + "\n")
-    
+
     filter_choice, filter_value = None, None
     while True:
         display_main_menu()
