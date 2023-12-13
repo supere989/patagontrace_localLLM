@@ -36,6 +36,11 @@ def dia_pcap_to_txt(input_file, protocol):
     result = run_tshark_cmd(cmd)
     return ' '.join(result) if result else None
 
+def dia_filtered_pcap_to_txt(input_file, protocol, imsi, session_id):
+    cmd = f'tshark -r {input_file} -Y "{protocol} && e212.imsi == {imsi} && diameter.Session-Id == \\"{session_id}\\"" -T fields -e frame.time -e ip.src -e ip.dst -e diameter.Session-Id -e diameter.cmd.code -e diameter.applicationId -e diameter.Result-Code -e diameter.CC-Request-Type -e diameter.CC-Request-Number -e diameter.Origin-Host -e diameter.Origin-Realm -e diameter.Destination-Host -e diameter.Destination-Realm'
+    result = run_tshark_cmd(cmd)
+    return ' '.join(result) if result else None
+
 def sig_pcap_to_txt(input_file):
     cmd = f'tshark -r {input_file} -Y {protocol} -T fields -e frame.time -e ip.src -e ip.dst -e diameter.Session-Id -e diameter.cmd.code -e diameter.applicationId -e diameter.Result-Code -e diameter.CC-Request-Type -e diameter.CC-Request-Number -e diameter.Origin-Host -e diameter.Origin-Realm -e diameter.Destination-Host -e diameter.Destination-Realm'
     result = run_tshark_cmd(cmd)
