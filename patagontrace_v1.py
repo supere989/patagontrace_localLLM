@@ -125,14 +125,19 @@ def display_prompt_menu():
     if args.pcap and args.protocol:
         pcap_text = pcap_to_txt(args.pcap, args.protocol)
         if pcap_text:
+            # Send pcap text to OpenAI for analysis
             analysis_prompt = f"Analyze the following network traffic data extracted from a pcap file with protocol {args.protocol}: \n\n{pcap_text}"
             response = openai.ChatCompletion.create(model=args.model, messages=[{"role": "system", "content": analysis_prompt}], temperature=args.temperature)
             analysis_overview = response.choices[0].message['content'].strip()
+
+            # Display analysis overview
             print(Fore.CYAN + analysis_overview + Style.RESET_ALL + "\n")
+            
+            # Display prompt menu
+            display_prompt_menu()
         else:
             print("Failed to extract text from pcap file.")
             sys.exit(0)
-
     else:
         print("No pcap file provided. Exiting.")
         sys.exit(0)
@@ -140,11 +145,15 @@ def display_prompt_menu():
     messages = []
     while True:
         print_centered_no_newline(Fore.BLUE + "You: ")
-        prompt = get_user_input(Fore.BLUE + "")
-
-        if prompt.lower() in ["quit", "q", "bye"]:
+        user_input = get_user_input(Fore.BLUE + "")
+        if user_input.lower() in ["quit", "q", "bye"]:
             print(Fore.YELLOW + "\nPatagontrace: Until you drag me out of the packets again...\n")
             break
+
+        if user_input.strip().isdigit() and 1 <= int(user_input.strip()) <= len(prompts):
+            prompt = prompts[int(user_input.strip()) - 1].split(':')[1].strip()
+        else:
+            prompt = user_input.strip()
 
         messages.append({"role": "user", "content": prompt})
         response = openai.ChatCompletion.create(model=args.model, messages=messages, temperature=args.temperature)
