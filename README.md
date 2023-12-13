@@ -47,14 +47,7 @@ You can switch temperature using the `--temp` argument (run without `--temp` to 
 
 To end the interactive chat, use either `bye`,`quit`,`q` or `ctrl+c`.
 
-### Data Confidentiality and Privacy
-This tool utilizes OpenAI's ChatGPT to analyze network traffic data extracted from pcap files. It's important to understand that when using this tool, the data you provide (such as IP addresses, IMSIs, MSISDNs, and other network details) is sent to ChatGPT for analysis.
+### Data Confidentiality
+This tool utilizes OpenAI's ChatGPT for processing and analysis. Please be aware that any data provided may be used in accordance with OpenAI's use-case policy. We recommend not sharing any sensitive or personal information. For further details, please refer to OpenAI's privacy policy.
 
-### Data Handling
-Confidentiality: Please be aware that the data you input into the tool is processed by ChatGPT, which is a publicly available language model developed by OpenAI.
-Data Usage: The data sent to ChatGPT may be used by OpenAI to improve the performance and capabilities of their models. It's important to consider the sensitivity of the data you are analyzing with this tool.
-
-### User Responsibility
-It is the user's responsibility to ensure that the use of this tool and ChatGPT complies with applicable data protection laws and organizational policies.
-Users should be aware of the data they are sharing and should anonymize any sensitive or personally identifiable information before analysis.
 
