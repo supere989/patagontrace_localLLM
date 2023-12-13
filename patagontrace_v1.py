@@ -24,7 +24,7 @@ def run_tshark_cmd(cmd):
     return output.decode('utf-8').splitlines()
 
 def pcap_to_txt(input_file, protocol):
-    cmd = f'tshark -r {input_file} -Y {protocol} -T fields -e frame.time -e ip.src -e ip.dst -e _ws.col.info'
+    cmd = f'tshark -r {input_file} -Y {protocol}'
     result = run_tshark_cmd(cmd)
     if len(result) > 5000:
         result = result[:5000]
