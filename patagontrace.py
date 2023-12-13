@@ -243,7 +243,7 @@ def main():
             prompt_choice = get_user_input(Fore.WHITE  + "")
 
             if prompt_choice.lower() in ["quit", "q", "bye"]:
-                print(Fore.YELLOW + "\nPatagontrace: In case I don’t see ya, good afternoon, good evening, and good night!\n")
+                print(Fore.WHITE + "\nPatagontrace: In case I don’t see ya, good afternoon, good evening, and good night!\n")
                 break
 
             if prompt_choice == "0":
@@ -272,7 +272,7 @@ def main():
 
         # If user wants to quit
         if prompt_choice.lower() in ["quit", "q", "bye"]:
-            print(Fore.YELLOW + "\nPatagontrace: See  you soon...\n")
+            print(Fore.WHITE + "\nPatagontrace: In case I don’t see ya, good afternoon, good evening, and good night!\n")
             break
 
 if __name__ == "__main__":
