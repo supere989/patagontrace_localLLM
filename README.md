@@ -2,7 +2,7 @@
 
 PCAP analyzer integrated with OpenAI's ChatGPT into your shell.
 
-![](https://imgur.com/2WDy29Y.png)
+![](https://ibb.co/Rhp1PbJ)
 
 ### Description
 
@@ -18,18 +18,17 @@ An AI-powered PCAP analysis utility that you can access directly from your conso
 
 ### Installing
 
-* Clone the repo and copy the folder to a permanent location (including the /src/ folder).
+* Clone the repo and copy the folder to a permanent location.
 
-* Open the script and amend `openai.api_key = "API_KEY"` with your aforementioned API key and save.
+* Open patagontrace.py and update `openai.api_key = "API_KEY"` .
 
 * Create an alias pointing at the script's location, either in your bash profile *~/.bash_profile* or *~/.bashrc* or *~/.zshrc* - i.e:
  ```alias patagontrace='python3 /path/to/patagontrace.py'```
 
 ### Usage
 
-Using your chosen alias you can call it from shell and pass your question as an argument for one off questions:
+Using your chosen alias you can call it from shell and pass the pcap name and the protocol to be analyzed.
 
-```$ patagontrace "Recommend a python module for LP and link documentation?"```
 
 ![patagontrace](https://imgur.com/JYfwkd7.png)
 
