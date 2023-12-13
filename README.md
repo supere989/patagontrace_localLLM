@@ -29,8 +29,8 @@ An AI-powered PCAP analysis utility that you can access directly from your conso
 
 Using your chosen alias you can call it from shell and pass the pcap name and the protocol to be analyzed.
 
- # patagontrace --pcap ../sip-routing-error-wireshark.pcap --protocol sip
- # patagontrace --pcap ../dia-links.pcap --protocol diameter
+patagontrace --pcap ../sip-routing-error-wireshark.pcap --protocol sip
+patagontrace --pcap ../dia-links.pcap --protocol diameter
 
 The default model used is `gpt-3.5-turbo` for a more fluent experience as its replies are much faster and API pricing is significantly cheaper.
 
@@ -47,7 +47,7 @@ You can switch temperature using the `--temp` argument (run without `--temp` to 
 To end the interactive chat, use either `bye`,`quit`,`q` or `ctrl+c`.
 
 
-### Data Confidentiality and Privacy
+# Data Confidentiality and Privacy
 Interaction with ChatGPT
 This tool utilizes OpenAI's ChatGPT to analyze network traffic data extracted from pcap files. It's important to understand that when using this tool, the data you provide (such as IP addresses, IMSIs, MSISDNs, and other network details) is sent to ChatGPT for analysis.
 
