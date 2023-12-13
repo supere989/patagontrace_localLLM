@@ -134,6 +134,7 @@ def main():
             response = openai.ChatCompletion.create(model=args.model, messages=[{"role": "system", "content": analysis_prompt}], temperature=args.temperature)
             analysis_overview = response.choices[0].message['content'].strip()
 
+            print(Fore.YELLOW + center_multiline_string(lamp))
             # Display analysis overview
             print(Fore.CYAN + analysis_overview + Style.RESET_ALL + "\n")
             
