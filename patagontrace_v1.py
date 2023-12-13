@@ -19,13 +19,32 @@ def run_tshark_cmd(cmd):
         return None
     return output.decode('utf-8').splitlines()
 
-def list_imsis(input_file, protocol):
+def dia_list_imsis(input_file, protocol):
     cmd = f'tshark -r {input_file} -Y "{protocol}" -T fields -e e212.imsi'
     return list(set(run_tshark_cmd(cmd)))
 
-def list_session_ids(input_file, protocol, imsi):
+def dia_list_session_ids(input_file, protocol, imsi):
     cmd = f'tshark -r {input_file} -Y "{protocol} && e212.imsi == {imsi}" -T fields -e frame.time -e diameter.Session-Id -e diameter.Auth-Application-Id'
     return run_tshark_cmd(cmd)
+
+def dia_list_session_ids(input_file, protocol, imsi):
+    cmd = f'tshark -r {input_file} -Y "{protocol} && e212.imsi == {imsi}" -T fields -e frame.time -e diameter.Session-Id -e diameter.Auth-Application-Id'
+    return run_tshark_cmd(cmd)
+
+def dia_pcap_to_txt(input_file, protocol):
+    cmd = f'tshark -r {input_file} -Y {protocol} -T fields -e frame.time -e ip.src -e ip.dst -e diameter.Session-Id -e diameter.cmd.code -e diameter.applicationId -e diameter.Result-Code -e diameter.CC-Request-Type -e diameter.CC-Request-Number -e diameter.Origin-Host -e diameter.Origin-Realm -e diameter.Destination-Host -e diameter.Destination-Realm'
+    result = run_tshark_cmd(cmd)
+    return ' '.join(result) if result else None
+
+def sig_pcap_to_txt(input_file):
+    cmd = f'tshark -r {input_file} -Y {protocol} -T fields -e frame.time -e ip.src -e ip.dst -e diameter.Session-Id -e diameter.cmd.code -e diameter.applicationId -e diameter.Result-Code -e diameter.CC-Request-Type -e diameter.CC-Request-Number -e diameter.Origin-Host -e diameter.Origin-Realm -e diameter.Destination-Host -e diameter.Destination-Realm'
+    result = run_tshark_cmd(cmd)
+    return ' '.join(result) if result else None
+    
+def sip_pcap_to_txt(input_file, protocol):
+    cmd = f'tshark -r {input_file} -Y {protocol} -T fields -e frame.time -e ip.src -e ip.dst -e diameter.Session-Id -e diameter.cmd.code -e diameter.applicationId -e diameter.Result-Code -e diameter.CC-Request-Type -e diameter.CC-Request-Number -e diameter.Origin-Host -e diameter.Origin-Realm -e diameter.Destination-Host -e diameter.Destination-Realm'
+    result = run_tshark_cmd(cmd)
+    return ' '.join(result) if result else None
 
 def select_from_list(items, item_type):
     for i, item in enumerate(items, 1):
@@ -40,10 +59,6 @@ def select_from_list(items, item_type):
         except ValueError:
             print("Invalid input. Please enter a number.")
 
-def pcap_to_txt(input_file, protocol, imsi, session_id):
-    cmd = f'tshark -r {input_file} -Y "diameter && e212.imsi == {imsi} && diameter.Session-Id == \\"{session_id}\\"" -T fields -e frame.time -e ip.src -e ip.dst -e diameter.Session-Id -e diameter.cmd.code -e diameter.applicationId -e diameter.Result-Code -e diameter.CC-Request-Type -e diameter.CC-Request-Number -e diameter.Origin-Host -e diameter.Origin-Realm -e diameter.Destination-Host -e diameter.Destination-Realm'
-    result = run_tshark_cmd(cmd)
-    return ' '.join(result) if result else None
 
 # --- CLI Chat Function ---
 def main():
@@ -107,20 +122,28 @@ def main():
     pcap_overview = None
 
     if args.pcap and args.protocol:
-    print(Fore.YELLOW + "Your ASCII Art Here" + Style.RESET_ALL)  # ASCII Art
-    initial_prompt = f"Provide an overview of the pcap file {args.pcap} with protocol {args.protocol}"
-    response = openai.ChatCompletion.create(model=args.model, messages=[{"role": "system", "content": initial_prompt}], temperature=args.temperature)
-    pcap_overview = response.choices[0].message['content'].strip()
+        # Process the pcap file for Diameter and extract text
+        if args.protocol = diameter
+        pcap_text = dia_pcap_to_txt(args.pcap, args.protocol)
+        if args.protocol = sigtran
+        pcap_text = sig_pcap_to_txt(args.pcap, args.protocol)
+        if args.protocol = sip
+        pcap_text = sip_pcap_to_txt(args.pcap, args.protocol)
+        if pcap_text:
+            print(f"Extracted text from pcap: {pcap_text[:500]}...")  # Display a snippet for debug
 
-    if pcap_overview:
-        print(Fore.CYAN + pcap_overview + Style.RESET_ALL + "\n")
+            # Now pass this text to ChatGPT for analysis
+            analysis_prompt = f"Provide a short overview (network elements and their IPs, call flow, potential issues) of the following pcap traffic with focus on protocol {args.protocol}: \n\n{pcap_text}"
+            print(f"Sending analysis prompt to ChatGPT: {analysis_prompt[:500]}...")  # Debug print
+            response = openai.ChatCompletion.create(model=args.model, messages=[{"role": "system", "content": analysis_prompt}], temperature=args.temperature)
+            analysis_overview = response.choices[0].message['content'].strip()
 
-    display_prompt_menu()
-    
-    if args.pcap and args.protocol:
-        initial_prompt = f"Provide an overview of the pcap file {args.pcap} with protocol {args.protocol}"
-        response = openai.Completion.create(model=args.model, prompt=initial_prompt, temperature=args.temperature)
-        pcap_overview = response.choices[0].text.strip()
+            print(Fore.CYAN + analysis_overview + Style.RESET_ALL + "\n")
+        else:
+            print("Failed to extract text from pcap file.")
+
+        display_prompt_menu()
+
 
     if args.question:
         prompt = " ".join(args.question).rstrip(string.punctuation)
