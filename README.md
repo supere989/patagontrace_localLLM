@@ -31,6 +31,7 @@ An AI-powered PCAP analysis utility that you can access directly from your conso
 Using your chosen alias you can call it from shell and pass the pcap name and the protocol to be analyzed.
 
 patagontrace --pcap ../sip-routing-error-wireshark.pcap --protocol sip
+
 patagontrace --pcap ../dia-links.pcap --protocol diameter
 
 The default model used is `gpt-3.5-turbo` for a more fluent experience as its replies are much faster and API pricing is significantly cheaper.
