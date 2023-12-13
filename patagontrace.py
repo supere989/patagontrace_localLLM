@@ -253,9 +253,9 @@ def main():
                 prompt_index = int(prompt_choice.strip()) - 1
                 if 0 <= prompt_index < len(prompts):
                     chosen_prompt = prompts[prompt_index].split(':')[1].strip()
-                    combined_prompt = f"{chosen_prompt}\n\n{filtered_pcap_text}"
+                    combined_prompt = f"{chosen_prompt} Protocol: {args.protocol} {filtered_pcap_text}"
             else:
-                combined_prompt = f"{prompt_choice.strip()}\n\n{filtered_pcap_text}"
+                combined_prompt = f"{chosen_prompt} Protocol: {args.protocol} {filtered_pcap_text}"
 
             print(combined_prompt)
             messages = [{"role": "user", "content": combined_prompt}]
