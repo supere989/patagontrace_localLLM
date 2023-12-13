@@ -167,7 +167,7 @@ def main():
         else:
             prompt = user_input.strip()
 
-        messages.append({"role": "user", "content": prompt})
+        messages.append({"role": "user", "content": prompt {pcap_text}})
         response = openai.ChatCompletion.create(model=args.model, messages=messages, temperature=args.temperature)
         reply = response.choices[0].message['content']
 
