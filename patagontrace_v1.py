@@ -123,12 +123,16 @@ def main():
     args = parse_args()
     
     if args.pcap and args.protocol:
-        pcap_text = pcap_to_txt(args.pcap, args.protocol)
-        if pcap_text:
-            # Send pcap text to OpenAI for analysis
-            analysis_prompt = f"Analyze the following network traffic data extracted from a pcap file with protocol {args.protocol}: \n\n{pcap_text}"
-            response = openai.ChatCompletion.create(model=args.model, messages=[{"role": "system", "content": analysis_prompt}], temperature=args.temperature)
-            analysis_overview = response.choices[0].message['content'].strip()
+    pcap_text = pcap_to_txt(args.pcap, args.protocol)
+    if pcap_text:
+        # Updated analysis prompt
+        analysis_prompt = (f"Analyze the pcap trace focusing on {args.protocol}. Output structured in three sections:\n"
+                           f"1) Summary of Findings: Overview of pcap for the protocol.\n"
+                           f"2) Identified Concerns: Issues in pcap.\n"
+                           f"3) Troubleshooting Suggestions: Steps to resolve issues.\n\n"
+                           f"{pcap_text}")
+        response = openai.ChatCompletion.create(model=args.model, messages=[{"role": "system", "content": analysis_prompt}], temperature=args.temperature)
+        analysis_overview = response.choices[0].message['content'].strip()
 
             # Display analysis overview
             print(Fore.CYAN + analysis_overview + Style.RESET_ALL + "\n")
