@@ -74,29 +74,29 @@ def main():
         parser.add_argument("--pcap", help="Path to pcap file for analysis")
         parser.add_argument("--protocol", help="Protocol used in pcap file")
         return parser.parse_args()
-        
+
     def display_prompt_menu():
-            term_width = shutil.get_terminal_size((80, 20)).columns
-            num_columns = 3
-            column_width = term_width // num_columns
-            formatted_prompts = []
+        term_width = shutil.get_terminal_size((80, 20)).columns
+        num_columns = 3
+        column_width = term_width // num_columns
+        formatted_prompts = []
 
-            for i, prompt in enumerate(prompts):
-                formatted_prompt = f"{i + 1} - {prompt.split(':')[0]}"
-                padded_prompt = formatted_prompt.center(column_width)
-                formatted_prompts.append(padded_prompt)
+        for i, prompt in enumerate(prompts):
+            formatted_prompt = f"{i + 1} - {prompt.split(':')[0]}"
+            padded_prompt = formatted_prompt.center(column_width)
+            formatted_prompts.append(padded_prompt)
 
-            print(
-                Fore.YELLOW
-                + "Ask a question, choose a prompt, or 'q' to quit:".center(term_width)
-                + "\n"
-            )
-            print(Fore.YELLOW + "=" * term_width)
-            for i, formatted_prompt in enumerate(formatted_prompts):
-                print(Fore.YELLOW + formatted_prompt, end="")
-                if (i + 1) % num_columns == 0 and i != len(formatted_prompts) - 1:
-                    print()
-            print(Fore.YELLOW + "\n" + "=" * term_width + Style.RESET_ALL)
+        print(
+            Fore.YELLOW
+            + "Ask a question, choose a prompt, or 'q' to quit:".center(term_width)
+            + "\n"
+        )
+        print(Fore.YELLOW + "=" * term_width)
+        for i, formatted_prompt in enumerate(formatted_prompts):
+            print(Fore.YELLOW + formatted_prompt, end="")
+            if (i + 1) % num_columns == 0 and i != len(formatted_prompts) - 1:
+                print()
+        print(Fore.YELLOW + "\n" + "=" * term_width + Style.RESET_ALL)
 
     def center_multiline_string(s):
         term_width = shutil.get_terminal_size((80, 20)).columns
@@ -119,11 +119,11 @@ def main():
         term_width = shutil.get_terminal_size((80, 20)).columns
         padding_left = (term_width - len(text)) // 2
         print(" " * padding_left + text, end="")
-        
+
     args = parse_args()
-    
+
     if args.pcap and args.protocol:
-    pcap_text = pcap_to_txt(args.pcap, args.protocol)
+        pcap_text = pcap_to_txt(args.pcap, args.protocol)
         if pcap_text:
             # Updated analysis prompt
             analysis_prompt = (f"Analyze the pcap trace focusing on {args.protocol}. Output structured in three sections:\n"
