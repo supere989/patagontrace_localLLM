@@ -24,12 +24,18 @@ def run_tshark_cmd(cmd):
     return output.decode('utf-8').splitlines()
 
 def pcap_to_txt(input_file, protocol):
-    cmd = f'tshark -r {input_file} -Y {protocol}'
+    cmd = f'tshark -r {input_file} -Y "{protocol}"'
     result = run_tshark_cmd(cmd)
-    if len(result) > 5000:
-        result = result[:5000]
-        print("Trimming pcap for AI processing")
-    return ' '.join(result) if result else None
+    if result is None:
+        print("Error running tshark command or tshark not found.")
+        return ""
+
+    # Join the lines and trim to 5000 characters
+    result_text = ' '.join(result)
+    if len(result_text) > 5000:
+        result_text = result_text[:5000]
+        print("Trimming pcap text to 5000 characters for AI processing.")
+    return result_text
 
 # Diameter specific functions
 def dia_list_imsis(input_file, protocol):
@@ -70,7 +76,7 @@ def main():
         return parser.parse_args()
 
     args = parse_args()
-
+    
     if args.pcap and args.protocol:
         pcap_text = pcap_to_txt(args.pcap, args.protocol)
         if pcap_text:
@@ -79,8 +85,9 @@ def main():
             analysis_overview = response.choices[0].message['content'].strip()
             print(Fore.CYAN + analysis_overview + Style.RESET_ALL + "\n")
         else:
-            print("Failed to extract text from pcap file. Exiting.")
+            print("Failed to extract text from pcap file.")
             sys.exit(0)
+
     else:
         print("No pcap file provided. Exiting.")
         sys.exit(0)
