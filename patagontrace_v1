@@ -87,10 +87,15 @@ def select_from_list(items, item_type):
 
 def display_main_menu():
     term_width = shutil.get_terminal_size((80, 20)).columns
+    num_columns = 4
+    column_width = term_width // num_columns
     filter_options = ["Protocol", "IP", "Frame", "None"]
+    formatted_options = []
+
     for i, option in enumerate(filter_options):
-        print(Fore.YELLOW + f"{i + 1} - {option}".center(term_width))
-    print(Fore.YELLOW + "=" * term_width + Style.RESET_ALL)
+        formatted_option = f"{i + 1} - {option}"
+        padded_option = formatted_option.center(column_width)
+        formatted_options.append(padded_option)
 
     print(
         Fore.YELLOW
