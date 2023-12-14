@@ -31,7 +31,16 @@ def run_tshark_cmd(cmd):
         return None
     return output.decode('utf-8').splitlines()
 
-
+def get_field_names(protocol):
+    field_names = {
+        "sip": "Frame Number, Frame Time, Source IP, Destination IP, SIP Method, SIP Call-ID, SIP From, SIP To, SIP CSeq, SIP Via, SIP Contact, SIP User-Agent, UDP Source Port, UDP Destination Port",
+        "diameter": "Frame Number, Frame Time, Source IP, Destination IP, Diameter Session-ID, Diameter Origin-Host, Diameter Origin-Realm, Diameter Destination-Host, Diameter Destination-Realm, Diameter Command Code, Diameter Result Code, Diameter Application ID, Diameter Flags Request",
+        "sigtran": "Frame Number, Frame Time, Source IP, Destination IP, SCTP Source Port, SCTP Destination Port, SCTP Verification Tag, M3UA Message Class, M3UA Message Type, M3UA Affected Point Code",
+        "gtp": "Frame Number, Frame Time, Source IP, Destination IP, GTP Message Type, GTP TEID",
+        # Add other protocols if needed
+    }
+    return field_names.get(protocol, "Unknown protocol fields")
+    
 def pcap_to_txt(input_file, protocol):
     field_commands = {
         "sip": (
@@ -267,8 +276,10 @@ def main():
 
     # Initial analysis of pcap without filtering
     pcap_text = pcap_to_txt(args.pcap, args.protocol)
+    field_description = get_field_names(args.protocol)
+
     # Analyze pcap with ChatGPT
-    initial_analysis_prompt = (f"Analyze the pcap trace focusing on {args.protocol}. Output structured in three sections:\n"
+    initial_analysis_prompt = (f"Analyze the pcap trace focusing on {args.protocol}.  The following fields are included: {field_description}. Output structured in three sections:\n"
                        f"1) Summary of Findings: Overview of pcap for the protocol.\n"
                        f"2) Identified Concerns: Issues in pcap.\n"
                        f"3) Troubleshooting Suggestions: Steps to resolve issues.\n\n"
