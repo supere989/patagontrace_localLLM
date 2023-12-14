@@ -7,7 +7,7 @@ PCAP analyzer integrated with OpenAI's ChatGPT into your shell.
 
 ### Description
 
-An AI-powered PCAP analysis utility that you can access directly from your console. It facilitates in-depth and comprehensive analysis and troubleshooting of PCAP files through ChatGPT integration. By default, the tool provides prompts tailored to 3G, 4G, and 5G protocols.
+An AI-powered PCAP analysis utility that you can access directly from your console. It facilitates in-depth and comprehensive analysis and troubleshooting of PCAP files through ChatGPT integration. Prompt can be customized based on typcal use cases
 
 ### Dependencies
 
@@ -28,11 +28,11 @@ An AI-powered PCAP analysis utility that you can access directly from your conso
 
 ### Usage
 
-Using your chosen alias you can call it from shell and pass the pcap name and the protocol to be analyzed.
+Using your chosen alias you can call it from shell and pass the pcap name to be analyzed.
 
- ```patagontrace --pcap ../sip-routing-error-wireshark.pcap --protocol sip```
+ ```patagontrace --pcap ../sip-routing-error-wireshark.pcap```
 
-```patagontrace --pcap ../dia-links.pcap --protocol diameter```
+```patagontrace --pcap ../dia-links.pcap```
 
 To end the interactive chat, use either `bye`,`quit`,`q` or `ctrl+c`.
 
