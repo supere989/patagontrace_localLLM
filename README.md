@@ -30,7 +30,7 @@ An AI-powered PCAP analysis utility that you can access directly from your conso
 
 Using your chosen alias you can call it from shell and pass the pcap name to be analyzed.
 
- ```patagontrace --pcap ../sip-routing-error-wireshark.pcap```
+```patagontrace --pcap ../sip-routing-error-wireshark.pcap```
 
 ```patagontrace --pcap ../dia-links.pcap```
 
