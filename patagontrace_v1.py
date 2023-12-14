@@ -64,6 +64,8 @@ def pcap_to_txt(input_file, protocol):
             '-e diameter.Destination-Realm '
             '-e diameter.cmd.code '
             '-e diameter.Result-Code '
+            '-e diameter.applicationId  '
+            '-e diameter.flags.request '
         ),
         "sigtran": (
             '-T fields '
