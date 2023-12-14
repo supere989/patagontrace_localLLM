@@ -41,6 +41,10 @@ def run_tshark_cmd_and_process_result(cmd):
         print("Trimming pcap text to 5000 characters for AI processing.")
     return result_text
 
+def pcap_to_txt(input_file):
+    cmd = f'tshark -r {input_file}'
+    return run_tshark_cmd_and_process_result(cmd)
+
 # Function to filter pcap based on user choice (IP, protocol, or frame number)
 def filtered_pcap_to_txt(input_file, filter_choice, filter_value):
     cmd = ""
