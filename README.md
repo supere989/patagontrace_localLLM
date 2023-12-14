@@ -36,18 +36,6 @@ Using your chosen alias you can call it from shell and pass the pcap name and th
 
 ```patagontrace --pcap ../sig-links.pcap --protocol sigtran```
 
-The default model used is `gpt-3.5-turbo` for a more fluent experience as its replies are much faster and API pricing is significantly cheaper.
-
-You can switch API model using the `--model` argument (run without `--model` to use the default model) if you'd like to to use gpt-4:
-
-```$ patagontrace --model gpt-4```
-
-`--model` will also accept *code-davinci-002* & *text-davinci-003* - other API models can be seen here [OpenAI ChatGPT API Models](https://platform.openai.com/docs/models) and added as required to the script.
-
-The temperature used is `0.7` - which appears to be a good balance between creativity and focused responses. 
-
-You can switch temperature using the `--temp` argument (run without `--temp` to use the default value).
-
 To end the interactive chat, use either `bye`,`quit`,`q` or `ctrl+c`.
 
 ### Data Confidentiality
