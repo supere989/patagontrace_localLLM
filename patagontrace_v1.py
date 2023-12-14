@@ -1,4 +1,3 @@
-patagontrace-main]$ cat patagontrace.py
 # Required imports
 import subprocess
 import sys
