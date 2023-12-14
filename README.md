@@ -34,8 +34,6 @@ Using your chosen alias you can call it from shell and pass the pcap name and th
 
 ```patagontrace --pcap ../dia-links.pcap --protocol diameter```
 
-```patagontrace --pcap ../sig-links.pcap --protocol sigtran```
-
 To end the interactive chat, use either `bye`,`quit`,`q` or `ctrl+c`.
 
 ### Data Confidentiality
