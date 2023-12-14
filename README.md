@@ -7,7 +7,7 @@ PCAP analyzer integrated with OpenAI's ChatGPT into your shell.
 
 ### Description
 
-An AI-powered PCAP analysis utility that you can access directly from your console. It facilitates in-depth and comprehensive analysis and troubleshooting of PCAP files through ChatGPT integration. Prompt can be customized based on typcal use cases
+AI-powered PCAP analysis utility accessible directly from your console. It enables in-depth and comprehensive analysis and troubleshooting of PCAP files through ChatGPT integration. The prompts are customizable to suit typical use cases.
 
 ### Dependencies
 
