@@ -19,6 +19,9 @@ ascii_logo="""
 ╚═╝░░░░░╚═╝░░╚═╝░░░╚═╝░░░╚═╝░░╚═╝░╚═════╝░░╚════╝░╚═╝░░╚══╝░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚═╝░╚════╝░╚══════╝
 """
 
+
+
+
 # --- PCAP Analyzer Functions ---
 def run_tshark_cmd(cmd):
     process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -70,6 +73,10 @@ def is_valid_tshark_filter(input_file, custom_filter):
     process = subprocess.Popen(test_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     _, error = process.communicate()
     return not error
+
+def filter_pcap_by_frame(input_file, frame_number):
+    cmd = f'tshark -r {input_file} -Y "frame.number == {frame_number}" -T json'
+    return run_tshark_cmd_and_process_result(cmd)
 	
 # Other Functions
 
@@ -147,16 +154,16 @@ def print_centered_no_newline(text):
     print(" " * padding_left + text, end="")
 
 def center_multiline_string(s):
-	term_width = shutil.get_terminal_size((80, 20)).columns
-	centered_lines = []
+        term_width = shutil.get_terminal_size((80, 20)).columns
+        centered_lines = []
 
-	for line in s.split("\n"):
-		padding_left = (term_width - len(line)) // 2
-		centered_line = " " * padding_left + line
-		centered_lines.append(centered_line)
+        for line in s.split("\n"):
+                padding_left = (term_width - len(line)) // 2
+                centered_line = " " * padding_left + line
+                centered_lines.append(centered_line)
 
-	return "\n".join(centered_lines)
-	
+        return "\n".join(centered_lines)
+
 def main():
     openai.api_key = ""
 
@@ -172,7 +179,7 @@ def main():
     if not args.pcap:
         print("No pcap file provided. Exiting.")
         sys.exit(0)
-    
+
     pcap_text = pcap_to_txt(args.pcap)  # Get the full pcap text
 
     print(Fore.YELLOW + center_multiline_string(ascii_logo))
@@ -196,7 +203,7 @@ def main():
 
         filter_type = ["Protocol", "IP", "Frame", "Other", "None", "Print Full PCAP"][int(filter_choice) - 1]
         filter_value = ""
-        current_pcap_text = pcap_text 
+        current_pcap_text = pcap_text
 
         if filter_type == "Other":
             valid_filter = False
@@ -204,7 +211,7 @@ def main():
                 filter_name = get_user_input("Enter custom filter name (e.g., diameter.cmd.code): ")
                 if filter_name.lower() in ["quit", "q", "bye"]:
                     print("Exiting filter selection.")
-                    break 
+                    break
                 filter_value = get_user_input(f"Enter value for {filter_name}: ")
                 if filter_value.lower() in ["quit", "q", "bye"]:
                     print("Exiting filter selection.")
@@ -219,7 +226,11 @@ def main():
                 continue  # Return to the main menu
 
             current_pcap_text = filtered_pcap_to_txt(args.pcap, filter_name, filter_value)
-        
+
+        elif filter_type == "Frame":
+            frame_number = get_user_input("Enter frame number to filter: ")
+            current_pcap_text = filter_pcap_by_frame(args.pcap, frame_number)
+
         elif filter_type != "None":
             filter_value = get_user_input(f"Enter {filter_type} value to filter: ")
             current_pcap_text = filtered_pcap_to_txt(args.pcap, filter_type, filter_value)
@@ -232,7 +243,7 @@ def main():
                 break
 
             if prompt_choice == "0":
-                break 
+                break
 
             if prompt_choice.upper() == "P":
                 print("\n--- PCAP Data ---")
