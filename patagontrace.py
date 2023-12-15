@@ -1,4 +1,3 @@
-# Required imports
 import subprocess
 import sys
 import openai
@@ -21,6 +20,7 @@ ascii_logo="""
 ██║░░░░░██║░░██║░░░██║░░░██║░░██║╚██████╔╝╚█████╔╝██║░╚███║░░░██║░░░██║░░██║██║░░██║╚█████╔╝███████╗
 ╚═╝░░░░░╚═╝░░╚═╝░░░╚═╝░░░╚═╝░░╚═╝░╚═════╝░░╚════╝░╚═╝░░╚══╝░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚═╝░╚════╝░╚══════╝
 """
+
 # --- PCAP Analyzer Functions ---
 def run_tshark_cmd(cmd):
     process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -30,88 +30,60 @@ def run_tshark_cmd(cmd):
         return None
     return output.decode('utf-8').splitlines()
 
-def pcap_to_txt(input_file, protocol):
-    cmd = f'tshark -r {input_file} -Y "{protocol}"'
+def run_tshark_cmd_and_process_result(cmd):
     result = run_tshark_cmd(cmd)
     if result is None:
         print("Error running tshark command or tshark not found.")
         return ""
-
-    # Join the lines and trim to 5000 characters
     result_text = ' '.join(result)
     if len(result_text) > 5000:
         result_text = result_text[:5000]
         print("Trimming pcap text to 5000 characters for AI processing.")
     return result_text
 
-# Function to filter pcap based on user choice
-def filtered_pcap_to_txt(input_file, protocol, filter_type, filter_value):
-    cmd = ""
-    if protocol == "sip":
-        if filter_type == "IP":
-            cmd = f'tshark -r {input_file} -Y "sip && ip.addr == {filter_value}"'
-        # Add other SIP-specific filters if needed
+def pcap_to_txt(input_file):
+    cmd = f'tshark -r {input_file}'
+    return run_tshark_cmd_and_process_result(cmd)
 
-    elif protocol == "diameter":
-        if filter_type == "IP":
-            cmd = f'tshark -r {input_file} -Y "diameter && ip.addr == {filter_value}"'
-        elif filter_type == "IMSI":
-            cmd = f'tshark -r {input_file} -Y "diameter && e212.imsi == {filter_value}"'
-        # Add other Diameter-specific filters if needed
+def filtered_pcap_to_txt(input_file, filter_choice, filter_value):
+    if filter_choice in ["IP", "Frame", "Protocol"]:
+        tshark_filter = {
+            "IP": "ip.addr == {}",
+            "Frame": "frame.number == {}",
+            "Protocol": "{}"
+        }.get(filter_choice).format(filter_value)
+    else:  # Custom filter
+        tshark_filter = "{} == {}".format(filter_choice, filter_value)
 
-    elif protocol == "sigtran":
-        if filter_type == "IP":
-            cmd = f'tshark -r {input_file} -Y "m3ua && ip.addr == {filter_value}"'
-        elif filter_type == "IMSI":
-            cmd = f'tshark -r {input_file} -Y "m3ua && mobile-imsi == {filter_value}"'
-        # Adjust Sigtran filters as per the protocol specifics
+    cmd = f'tshark -r {input_file} -Y "{tshark_filter}"'
+    return run_tshark_cmd_and_process_result(cmd)
 
-    elif protocol == "gtp":
-        if filter_type == "IP":
-            cmd = f'tshark -r {input_file} -Y "gtp && ip.addr == {filter_value}"'
-        elif filter_type == "IMSI":
-            cmd = f'tshark -r {input_file} -Y "gtp.imsi == {filter_value}"'
-        # Add other GTP-specific filters if needed
-
-    if cmd:
-        result = run_tshark_cmd(cmd)
-        if result:
-            result_text = ' '.join(result)
-            if len(result_text) > 5000:
-                result_text = result_text[:5000] + "..."
-                print("Trimming pcap text to 5000 characters for AI processing.")
-            return result_text
-        else:
-            return ""
+def print_full_pcap(input_file):
+    cmd = f'tshark -r {input_file}'
+    full_pcap_text = run_tshark_cmd(cmd)
+    if full_pcap_text is None:
+        print("Error running tshark command or tshark not found.")
     else:
-        return pcap_to_txt(input_file, protocol)
+        for line in full_pcap_text:
+            print(line)
 
-
-
-
+def is_valid_tshark_filter(input_file, custom_filter):
+    test_cmd = f'tshark -r {input_file} -Y "{custom_filter}"'
+    process = subprocess.Popen(test_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    _, error = process.communicate()
+    return not error
+	
 # Other Functions
-def select_from_list(items, item_type):
-    for i, item in enumerate(items, 1):
-        print(f"{i}. {item}")
-    while True:
-        try:
-            choice = int(input(f"Select a {item_type}: ")) - 1
-            if 0 <= choice < len(items):
-                return items[choice]
-            else:
-                print("Invalid selection. Please try again.")
-        except ValueError:
-            print("Invalid input. Please enter a number.")
 
 def display_main_menu():
     term_width = shutil.get_terminal_size((80, 20)).columns
     num_columns = 4
     column_width = term_width // num_columns
-    filter_options = ["IP", "IMSI", "MSISDN", "None"]
+    filter_options = ["Protocol", "IP", "Frame", "Other", "None", "P - Print PCAP"]
     formatted_options = []
 
     for i, option in enumerate(filter_options):
-        formatted_option = f"{i + 1} - {option}"
+        formatted_option = f"{i + 1} - {option}" if i < 5 else option
         padded_option = formatted_option.center(column_width)
         formatted_options.append(padded_option)
 
@@ -138,7 +110,8 @@ def display_prompt_menu():
         formatted_prompt = f"{i + 1} - {prompt.split(':')[0]}"
         padded_prompt = formatted_prompt.center(column_width)
         formatted_prompts.append(padded_prompt)
-    formatted_prompts.insert(0, "0 - Go back to main menu".center(column_width))
+    formatted_prompts.append("P - Print Current PCAP".center(column_width))
+    formatted_prompts.append("0 - Go back to main menu".center(column_width))  # Moved to the end
 
     print(
         Fore.YELLOW
@@ -152,28 +125,20 @@ def display_prompt_menu():
             print()
     print(Fore.YELLOW + "\n" + "=" * term_width + Style.RESET_ALL)
 
-def center_multiline_string(s):
-    term_width = shutil.get_terminal_size((80, 20)).columns
-    centered_lines = []
-
-    for line in s.split("\n"):
-        padding_left = (term_width - len(line)) // 2
-        centered_line = " " * padding_left + line
-        centered_lines.append(centered_line)
-
-    return "\n".join(centered_lines)
-
 def get_user_input(prompt):
+    term_width = shutil.get_terminal_size((80, 20)).columns
+    padding = (term_width - len(prompt)) // 2
+    sys.stdout.write("\033[K")  # Clear the line
+    sys.stdout.write("\r" + " " * padding + prompt)
+    sys.stdout.flush()
     try:
-        return input(prompt)
+        return input()
     except (EOFError, KeyboardInterrupt):
         return "q"
-
 def print_centered_no_newline(text):
     term_width = shutil.get_terminal_size((80, 20)).columns
     padding_left = (term_width - len(text)) // 2
     print(" " * padding_left + text, end="")
-
 
 # --- CLI Chat Function ---
 def main():
@@ -184,91 +149,84 @@ def main():
         parser.add_argument("--model", default="gpt-3.5-turbo", choices=["gpt-4", "gpt-3.5-turbo", "code-davinci-002", "text-davinci-003"], help="Choose the API model to use")
         parser.add_argument("--temperature", default=0.7, type=float, help="Control the randomness of the response")
         parser.add_argument("--pcap", help="Path to pcap file for analysis")
-        parser.add_argument("--protocol", help="Protocol used in pcap file")
         return parser.parse_args()
-
 
     args = parse_args()
 
-    if not args.pcap or not args.protocol:
-        print("No pcap file or protocol provided. Exiting.")
+    if not args.pcap:
+        print("No pcap file provided. Exiting.")
         sys.exit(0)
 
-    # Display ASCII art
-    print(Fore.YELLOW + center_multiline_string(ascii_logo) + Style.RESET_ALL)
-
-    # Initial analysis of pcap without filtering
-    pcap_text = pcap_to_txt(args.pcap, args.protocol)
-    # Analyze pcap with ChatGPT
-    initial_analysis_prompt = (f"Analyze the pcap trace focusing on {args.protocol}. Output structured in three sections:\n"
-                       f"1) Summary of Findings: Overview of pcap for the protocol.\n"
-                       f"2) Identified Concerns: Issues in pcap.\n"
-                       f"3) Troubleshooting Suggestions: Steps to resolve issues.\n\n"
-                       f"{pcap_text}")
-    #print(initial_analysis_prompt)
+    pcap_text = pcap_to_txt(args.pcap)  # Get the full pcap text
+    initial_analysis_prompt = f"Provide a short overview of the following pcap:\n\n{pcap_text}"
+    print(initial_analysis_prompt)
     initial_response = openai.ChatCompletion.create(model=args.model, messages=[{"role": "system", "content": initial_analysis_prompt}], temperature=args.temperature)
     initial_analysis_overview = initial_response.choices[0].message['content'].strip()
     print(Fore.CYAN + initial_analysis_overview + Style.RESET_ALL + "\n")
 
-    filter_choice, filter_value = None, None
     while True:
         display_main_menu()
-        print_centered_no_newline(Fore.WHITE + "Select an option: ")
-        filter_choice = get_user_input(Fore.WHITE + "")
+        filter_choice = get_user_input("Select an option: ")
 
-        if filter_choice == "1":
-            print_centered_no_newline(Fore.WHITE + "Enter IP address to filter: ")
-            filter_value = get_user_input(Fore.WHITE + "")
-            filtered_pcap_text = filtered_pcap_to_txt(args.pcap, args.protocol, "IP", filter_value)
-        elif filter_choice == "2":
-            print_centered_no_newline(Fore.WHITE + "Enter IMSI to filter: ")
-            filter_value = get_user_input(Fore.WHITE + "")
-            filtered_pcap_text = filtered_pcap_to_txt(args.pcap, args.protocol, "IMSI", filter_value)
-        elif filter_choice == "3":
-            print_centered_no_newline(Fore.WHITE + "Enter MSISDN to filter: ")
-            filter_value = get_user_input(Fore.WHITE + "")
-            filtered_pcap_text = filtered_pcap_to_txt(args.pcap, args.protocol, "MSISDN", filter_value)
-        elif filter_choice == "4":
-            filtered_pcap_text = pcap_text
-        elif filter_choice.lower() in ["quit", "q", "bye"]:
+        if filter_choice.lower() in ["quit", "q", "bye"]:
+            print(Fore.WHITE + "\nPatagontrace: In case I don’t see ya, good afternoon, good evening, and good night!\n")
             break
-        else:
-            print(Fore.RED + "Invalid choice. Please try again." + Style.RESET_ALL)
+
+        if filter_choice.upper() == "P":
+            print_full_pcap(args.pcap)
             continue
+
+        filter_type = ["Protocol", "IP", "Frame", "Other", "None", "Print Full PCAP"][int(filter_choice) - 1]
+        filter_value = ""
+        current_pcap_text = pcap_text  # Default to full pcap text
+
+        if filter_type == "Other":
+            valid_filter = False
+            while not valid_filter:
+                filter_name = get_user_input("Enter custom filter name (e.g., diameter.cmd.code): ")
+                filter_value = get_user_input(f"Enter value for {filter_name}: ")
+                tshark_filter = f"{filter_name} == {filter_value}"
+                valid_filter = is_valid_tshark_filter(args.pcap, tshark_filter)
+                if not valid_filter:
+                    print(Fore.RED + "Invalid filter. Please try again." + Style.RESET_ALL)
+            current_pcap_text = filtered_pcap_to_txt(args.pcap, filter_name, filter_value)
+			
+        elif filter_type != "None":
+            filter_value = get_user_input(f"Enter {filter_type} value to filter: ")
+            current_pcap_text = filtered_pcap_to_txt(args.pcap, filter_type, filter_value)
 
         while True:
             display_prompt_menu()
-            print_centered_no_newline(Fore.WHITE  + "Select an option or write your prompt: ")
-            prompt_choice = get_user_input(Fore.WHITE  + "")
+            prompt_choice = get_user_input("Select an option or write your prompt: ")
 
             if prompt_choice.lower() in ["quit", "q", "bye"]:
                 break
 
             if prompt_choice == "0":
-                # Go back to filter selection
-                break
+                break  # Go back to filter selection
+
+            if prompt_choice.upper() == "P":
+                # Print the current PCAP and continue in the loop
+                print("\n--- PCAP Data ---")
+                print(current_pcap_text)
+                print("\n--- End of PCAP Data ---\n")
+                continue
 
             combined_prompt = ""
             if prompt_choice.strip().isdigit():
                 prompt_index = int(prompt_choice.strip()) - 1
                 if 0 <= prompt_index < len(prompts):
                     chosen_prompt = prompts[prompt_index].split(':')[1].strip()
-                    combined_prompt = f"{chosen_prompt} Protocol: {args.protocol} {filtered_pcap_text}"
+                    combined_prompt = f"{chosen_prompt} with focus on {filter_type} {filter_value}: {current_pcap_text}"
             else:
-                combined_prompt = f"{chosen_prompt} Protocol: {args.protocol} {filtered_pcap_text}"
+                combined_prompt = f"{prompt_choice} focusing on {filter_type} {filter_value}: {current_pcap_text}"
 
-            #print(combined_prompt)
+            print(combined_prompt)
             messages = [{"role": "user", "content": combined_prompt}]
             response = openai.ChatCompletion.create(model=args.model, messages=messages, temperature=args.temperature)
             reply = response.choices[0].message['content']
-
             print(Fore.YELLOW + "\nPatagontrace: " + reply + "\n")
 
-        # If user chose to go back to the main menu
-        if prompt_choice == "0":
-            continue
-
-        # If user wants to quit
         if prompt_choice.lower() in ["quit", "q", "bye"]:
             print(Fore.WHITE + "\nPatagontrace: In case I don’t see ya, good afternoon, good evening, and good night!\n")
             break
