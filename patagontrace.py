@@ -216,7 +216,7 @@ def main():
 
         while True:
             display_prompt_menu()
-            prompt_choice = get_user_input("Select an option or write your prompt: ")
+            prompt_choice = get_user_input("Choose a prompt or ask a question: ")
 
             if prompt_choice.lower() in ["quit", "q", "bye"]:
                 break
