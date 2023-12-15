@@ -134,7 +134,7 @@ def get_user_input(prompt):
     term_width = shutil.get_terminal_size((80, 20)).columns
     padding = (term_width - len(prompt)) // 2
     sys.stdout.write("\033[K")  # Clear the line
-    colored_prompt = Fore.YELLOW + prompt + Style.RESET_ALL  # Apply yellow color to the prompt
+    colored_prompt = Fore.YELLOW + prompt + Style.RESET_ALL
     sys.stdout.write("\r" + " " * padding + colored_prompt)
     sys.stdout.flush()
     try:
@@ -157,7 +157,6 @@ def center_multiline_string(s):
 
 	return "\n".join(centered_lines)
 	
-# --- CLI Chat Function ---
 def main():
     openai.api_key = ""
 
@@ -173,7 +172,7 @@ def main():
     if not args.pcap:
         print("No pcap file provided. Exiting.")
         sys.exit(0)
-	
+    
     pcap_text = pcap_to_txt(args.pcap)  # Get the full pcap text
 
     print(Fore.YELLOW + center_multiline_string(ascii_logo))
@@ -197,7 +196,7 @@ def main():
 
         filter_type = ["Protocol", "IP", "Frame", "Other", "None", "Print Full PCAP"][int(filter_choice) - 1]
         filter_value = ""
-        current_pcap_text = pcap_text  # Default to full pcap text
+        current_pcap_text = pcap_text 
 
         if filter_type == "Other":
             valid_filter = False
@@ -205,11 +204,11 @@ def main():
                 filter_name = get_user_input("Enter custom filter name (e.g., diameter.cmd.code): ")
                 if filter_name.lower() in ["quit", "q", "bye"]:
                     print("Exiting filter selection.")
-                    break  # Exit the filter input loop
+                    break 
                 filter_value = get_user_input(f"Enter value for {filter_name}: ")
                 if filter_value.lower() in ["quit", "q", "bye"]:
                     print("Exiting filter selection.")
-                    break  # Exit the filter input loop
+                    break
 
                 tshark_filter = f"{filter_name} == {filter_value}"
                 valid_filter = is_valid_tshark_filter(args.pcap, tshark_filter)
@@ -220,7 +219,7 @@ def main():
                 continue  # Return to the main menu
 
             current_pcap_text = filtered_pcap_to_txt(args.pcap, filter_name, filter_value)
-			
+        
         elif filter_type != "None":
             filter_value = get_user_input(f"Enter {filter_type} value to filter: ")
             current_pcap_text = filtered_pcap_to_txt(args.pcap, filter_type, filter_value)
@@ -233,10 +232,9 @@ def main():
                 break
 
             if prompt_choice == "0":
-                break  # Go back to filter selection
+                break 
 
             if prompt_choice.upper() == "P":
-                # Print the current PCAP and continue in the loop
                 print("\n--- PCAP Data ---")
                 print(current_pcap_text)
                 print("\n--- End of PCAP Data ---\n")
@@ -251,12 +249,12 @@ def main():
                         combined_prompt = f"{chosen_prompt} focusing on {filter_type} {filter_value}: {current_pcap_text}"
                     else:
                         combined_prompt = f"{chosen_prompt}: {current_pcap_text}"
+            else:
+                if filter_type != "None":
+                    combined_prompt = f"{prompt_choice} focusing on {filter_type} {filter_value}: {current_pcap_text}"
                 else:
-                    if filter_type != "None":
-                        combined_prompt = f"{prompt_choice} focusing on {filter_type} {filter_value}: {current_pcap_text}"
-                    else:
-                        combined_prompt = f"{prompt_choice}: {current_pcap_text}"
-				
+                    combined_prompt = f"{prompt_choice}: {current_pcap_text}"
+
             messages = [{"role": "user", "content": combined_prompt}]
             response = openai.ChatCompletion.create(model=args.model, messages=messages, temperature=args.temperature)
             reply = response.choices[0].message['content']
