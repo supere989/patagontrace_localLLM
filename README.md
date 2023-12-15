@@ -7,7 +7,7 @@ PCAP analyzer integrated with OpenAI's ChatGPT into your shell.
 
 ### Description
 
-Patagontrace is an AI-powered PCAP analysis utility accessible directly from your console. It facilitates in-depth and comprehensive analysis of PCAP files, utilizing the advanced capabilities of ChatGPT. The tool is designed with customizable prompts to address typical networking and troubleshooting use cases.
+Patagontrace provides AI-driven PCAP file analysis in your console, powered by ChatGPT. It includes customizable default prompts for common network troubleshooting, allowing users to adapt them to their specific scenarios. Additionally, the interactive session enables users to input their own prompts for tailored analysis.
 
 ### Dependencies
 
