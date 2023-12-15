@@ -115,9 +115,6 @@ def display_prompt_menu():
         formatted_prompt = f"{i + 1} - {prompt.split(':')[0]}"
         padded_prompt = formatted_prompt.center(column_width)
         formatted_prompts.append(padded_prompt)
- #   formatted_prompts.append("0 - Go back to main menu".center(column_width)) 
- #   formatted_prompts.append("P - Print Current PCAP".center(column_width))
-    # Adding special color for specific options
     special_options = [
         Fore.BLUE + "0 - Go back to main menu".center(column_width) + Style.RESET_ALL,
         Fore.BLUE + "P - Print Current PCAP".center(column_width) + Style.RESET_ALL
