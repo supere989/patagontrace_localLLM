@@ -7,7 +7,7 @@ PCAP analyzer integrated with OpenAI's ChatGPT into your shell.
 
 ### Description
 
-AI-powered PCAP analysis utility accessible directly from your console. It enables in-depth and comprehensive analysis and troubleshooting of PCAP files through ChatGPT integration. The prompts are customizable to suit typical use cases.
+Patagontrace is an AI-powered PCAP analysis utility accessible directly from your console. It facilitates in-depth and comprehensive analysis of PCAP files, utilizing the advanced capabilities of ChatGPT. The tool is designed with customizable prompts to address typical networking and troubleshooting use cases.
 
 ### Dependencies
 
@@ -19,24 +19,26 @@ AI-powered PCAP analysis utility accessible directly from your console. It enabl
 
 ### Installing
 
-* Clone the repo and copy the folder to a permanent location.
+* Clone the Repository: Clone the repository using git clone, then navigate to the cloned folder.
 
-* Open patagontrace.py and update `openai.api_key = "API_KEY"` .
+* Open patagontrace.py and update the openai.api_key line with your API key.
+`openai.api_key = "API_KEY"`
 
-* Create an alias pointing at the script's location, either in your bash profile *~/.bash_profile* or *~/.bashrc* or *~/.zshrc* - i.e:
+* Create an Alias: Set up an alias in your shell profile: *~/.bash_profile* or *~/.bashrc* or *~/.zshrc* - i.e:
  ```alias patagontrace='python3 /path/to/patagontrace.py'```
 
 ### Usage
 
-Using your chosen alias you can call it from shell and pass the pcap name to be analyzed.
+To analyze a PCAP file, use the following command, replacing /path/to/file.pcap with the path to your PCAP file:
 
 ```patagontrace --pcap ../sip-routing-error-wireshark.pcap```
 
 ```patagontrace --pcap ../dia-links.pcap```
 
-To end the interactive chat, use either `bye`,`quit`,`q` or `ctrl+c`.
+To end the interactive chat session, use the commands bye, quit, q, or the keyboard shortcut Ctrl+C.
+
+For sample PCAP files, visit https://wiki.wireshark.org/SampleCaptures
 
 ### Data Confidentiality
-This tool utilizes OpenAI's ChatGPT for processing and analysis. Please be aware that any data provided may be used in accordance with OpenAI's use-case policy. We recommend not sharing any sensitive or personal information. For further details, please refer to OpenAI's privacy policy.
-
+This tool utilizes OpenAI's ChatGPT for processing and analysis. Please be cautious and avoid sharing any sensitive or personal information. For detailed information, refer to OpenAI's privacy policy.
 
