@@ -43,7 +43,7 @@ Patagontrace defaults to using the cost-effective and efficient GPT-3.5-turbo mo
 
 GPT-3.5-turbo has a token limit of 4093 tokens.
 
-PCAP files exceeding 7000 characters are trimmed to stay within the token limit.
+PCAP files exceeding 7500 characters are trimmed to stay within the token limit.
 
 
 ### Data Confidentiality
