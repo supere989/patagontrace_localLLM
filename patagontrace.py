@@ -197,11 +197,16 @@ def main():
             print(Fore.WHITE + "\nPatagontrace: In case I don’t see ya, good afternoon, good evening, and good night!\n")
             break
 
-        if filter_choice.upper() == "P":
-            print_full_pcap(args.pcap)
+        try:
+            filter_choice = int(filter_choice)
+            if filter_choice < 1 or filter_choice > 5:
+                print(Fore.RED + "Invalid choice. Please enter a number between 1 and 5." + Style.RESET_ALL)
+                continue
+        except ValueError:
+            print(Fore.RED + "Invalid input. Please enter a number between 1 and 5." + Style.RESET_ALL)
             continue
 
-        filter_type = ["Protocol", "IP", "Frame", "Other", "None", "Print Full PCAP"][int(filter_choice) - 1]
+        filter_type = ["Protocol", "IP", "Frame", "Other", "None", "Print Full PCAP"][filter_choice - 1]
         filter_value = ""
         current_pcap_text = pcap_text
 
