@@ -86,8 +86,7 @@ def display_main_menu():
         padded_option = formatted_option.center(column_width)
         formatted_options.append(padded_option)
 
-    # Adding special color for the 'Print PCAP' option
-    print_pcap_option = Fore.BLUE + "P - Print PCAP".center(column_width) + Style.RESET_ALL
+    print_pcap_option = Fore.WHITE + "P - Print PCAP".center(column_width) + Style.RESET_ALL
     formatted_options.append(print_pcap_option)
 
     print(
@@ -114,8 +113,8 @@ def display_prompt_menu():
         padded_prompt = formatted_prompt.center(column_width)
         formatted_prompts.append(padded_prompt)
     special_options = [
-        Fore.BLUE + "0 - Go back to main menu".center(column_width) + Style.RESET_ALL,
-        Fore.BLUE + "P - Print Current PCAP".center(column_width) + Style.RESET_ALL
+        Fore.WHITE + "0 - Go back to main menu".center(column_width) + Style.RESET_ALL,
+        Fore.WHITE + "P - Print Current PCAP".center(column_width) + Style.RESET_ALL
     ]
     formatted_prompts.extend(special_options)
 
