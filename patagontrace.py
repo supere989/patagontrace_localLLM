@@ -217,7 +217,7 @@ def main():
                 prompt_index = int(prompt_choice.strip()) - 1
                 if 0 <= prompt_index < len(prompts):
                     chosen_prompt = prompts[prompt_index].split(':')[1].strip()
-                    combined_prompt = f"{chosen_prompt} with focus on {filter_type} {filter_value}: {current_pcap_text}"
+                    combined_prompt = f"{chosen_prompt} focusing on {filter_type} {filter_value}: {current_pcap_text}"
             else:
                 combined_prompt = f"{prompt_choice} focusing on {filter_type} {filter_value}: {current_pcap_text}"
 
