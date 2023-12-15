@@ -8,10 +8,8 @@ import shutil
 import argparse
 import readline
 from colorama import Fore, Back, Style
-
-# Assuming extras.py contains greeting and lamp
-from src.extras import greeting, lamp
 from src.prompts import prompts
+
 ascii_logo="""
 ██████╗░░█████╗░████████╗░█████╗░░██████╗░░█████╗░███╗░░██╗████████╗██████╗░░█████╗░░█████╗░███████╗
 ██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗██╔════╝░██╔══██╗████╗░██║╚══██╔══╝██╔══██╗██╔══██╗██╔══██╗██╔════╝
@@ -148,6 +146,17 @@ def print_centered_no_newline(text):
     padding_left = (term_width - len(text)) // 2
     print(" " * padding_left + text, end="")
 
+def center_multiline_string(s):
+	term_width = shutil.get_terminal_size((80, 20)).columns
+	centered_lines = []
+
+	for line in s.split("\n"):
+		padding_left = (term_width - len(line)) // 2
+		centered_line = " " * padding_left + line
+		centered_lines.append(centered_line)
+
+	return "\n".join(centered_lines)
+	
 # --- CLI Chat Function ---
 def main():
     openai.api_key = ""
@@ -164,9 +173,11 @@ def main():
     if not args.pcap:
         print("No pcap file provided. Exiting.")
         sys.exit(0)
-
+	
     pcap_text = pcap_to_txt(args.pcap)  # Get the full pcap text
-    print(Fore.CYAN + "\nAI-Generated Overview of the PCAP:\n" + Style.RESET_ALL)
+
+    print(Fore.YELLOW + center_multiline_string(ascii_logo))
+    print(Fore.CYAN + "AI-Generated Overview of the PCAP:" + Style.RESET_ALL)
     initial_analysis_prompt = f"Provide a short overview of the following pcap:\n\n{pcap_text}"
     initial_response = openai.ChatCompletion.create(model=args.model, messages=[{"role": "system", "content": initial_analysis_prompt}], temperature=args.temperature)
     initial_analysis_overview = initial_response.choices[0].message['content'].strip()
