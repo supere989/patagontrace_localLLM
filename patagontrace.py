@@ -169,6 +169,7 @@ def main():
         sys.exit(0)
 
     pcap_text = pcap_to_txt(args.pcap)  # Get the full pcap text
+    print(Fore.CYAN + "\nAI-Generated Overview of the PCAP:\n" + Style.RESET_ALL)
     initial_analysis_prompt = f"Provide a short overview of the following pcap:\n\n{pcap_text}"
     initial_response = openai.ChatCompletion.create(model=args.model, messages=[{"role": "system", "content": initial_analysis_prompt}], temperature=args.temperature)
     initial_analysis_overview = initial_response.choices[0].message['content'].strip()
