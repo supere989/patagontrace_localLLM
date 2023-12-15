@@ -37,9 +37,9 @@ def run_tshark_cmd_and_process_result(cmd):
         print("Error running tshark command or tshark not found.")
         return ""
     result_text = ' '.join(result)
-    if len(result_text) > 5000:
-        result_text = result_text[:5000]
-        print("Trimming pcap text to 5000 characters for AI processing.")
+    if len(result_text) > 7000:
+        result_text = result_text[:7000]
+        print("Trimming pcap text to 7000 characters for AI processing.")
     return result_text
 
 def pcap_to_txt(input_file):
