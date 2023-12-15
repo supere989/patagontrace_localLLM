@@ -133,9 +133,9 @@ def display_prompt_menu():
 def get_user_input(prompt):
     term_width = shutil.get_terminal_size((80, 20)).columns
     padding = (term_width - len(prompt)) // 2
-    colored_prompt = Fore.YELLOW + prompt + Style.RESET_ALL
-    sys.stdout.write("\033[K")
-    sys.stdout.write("\r" + " " * padding + prompt)
+    sys.stdout.write("\033[K")  # Clear the line
+    colored_prompt = Fore.YELLOW + prompt + Style.RESET_ALL  # Apply yellow color to the prompt
+    sys.stdout.write("\r" + " " * padding + colored_prompt)
     sys.stdout.flush()
     try:
         return input()
