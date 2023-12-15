@@ -77,7 +77,7 @@ def is_valid_tshark_filter(input_file, custom_filter):
 def filter_pcap_by_frame(input_file, frame_number):
     cmd = f'tshark -r {input_file} -Y "frame.number == {frame_number}" -T json'
     return run_tshark_cmd_and_process_result(cmd)
-	
+
 # Other Functions
 
 def display_main_menu():
@@ -196,6 +196,11 @@ def main():
         if filter_choice.lower() in ["quit", "q", "bye"]:
             print(Fore.WHITE + "\nPatagontrace: In case I don’t see ya, good afternoon, good evening, and good night!\n")
             break
+
+        # Check if the input is "P" for "Print PCAP" and handle it accordingly
+        if filter_choice.upper() == "P":
+            print_full_pcap(args.pcap)  # Print the entire PCAP
+            continue  # Continue to the main menu
 
         try:
             filter_choice = int(filter_choice)
