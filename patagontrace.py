@@ -79,13 +79,18 @@ def display_main_menu():
     term_width = shutil.get_terminal_size((80, 20)).columns
     num_columns = 4
     column_width = term_width // num_columns
-    filter_options = ["Protocol", "IP", "Frame", "Other", "None", "P - Print PCAP"]
+    filter_options = ["Protocol", "IP", "Frame", "Other", "None"]
+
     formatted_options = []
 
     for i, option in enumerate(filter_options):
-        formatted_option = f"{i + 1} - {option}" if i < 5 else option
+        formatted_option = f"{i + 1} - {option}"
         padded_option = formatted_option.center(column_width)
         formatted_options.append(padded_option)
+
+    # Adding special color for the 'Print PCAP' option
+    print_pcap_option = Fore.BLUE + "P - Print PCAP".center(column_width) + Style.RESET_ALL
+    formatted_options.append(print_pcap_option)
 
     print(
         Fore.YELLOW
@@ -93,9 +98,9 @@ def display_main_menu():
         + "\n"
     )
     print(Fore.YELLOW + "=" * term_width)
-    for i, formatted_option in enumerate(formatted_options):
+    for formatted_option in formatted_options:
         print(Fore.YELLOW + formatted_option, end="")
-        if (i + 1) % num_columns == 0 and i != len(formatted_options) - 1:
+        if (formatted_options.index(formatted_option) + 1) % num_columns == 0 and formatted_option != formatted_options[-1]:
             print()
     print(Fore.YELLOW + "\n" + "=" * term_width + Style.RESET_ALL)
 
@@ -110,12 +115,18 @@ def display_prompt_menu():
         formatted_prompt = f"{i + 1} - {prompt.split(':')[0]}"
         padded_prompt = formatted_prompt.center(column_width)
         formatted_prompts.append(padded_prompt)
-    formatted_prompts.append("P - Print Current PCAP".center(column_width))
-    formatted_prompts.append("0 - Go back to main menu".center(column_width))  # Moved to the end
+ #   formatted_prompts.append("0 - Go back to main menu".center(column_width)) 
+ #   formatted_prompts.append("P - Print Current PCAP".center(column_width))
+    # Adding special color for specific options
+    special_options = [
+        Fore.BLUE + "0 - Go back to main menu".center(column_width) + Style.RESET_ALL,
+        Fore.BLUE + "P - Print Current PCAP".center(column_width) + Style.RESET_ALL
+    ]
+    formatted_prompts.extend(special_options)
 
     print(
         Fore.YELLOW
-        + "Ask a question, choose a prompt, or 'q' to quit:".center(term_width)
+        + "Choose a prompt, ask a question, or 'q' to quit:".center(term_width)
         + "\n"
     )
     print(Fore.YELLOW + "=" * term_width)
@@ -159,7 +170,6 @@ def main():
 
     pcap_text = pcap_to_txt(args.pcap)  # Get the full pcap text
     initial_analysis_prompt = f"Provide a short overview of the following pcap:\n\n{pcap_text}"
-    print(initial_analysis_prompt)
     initial_response = openai.ChatCompletion.create(model=args.model, messages=[{"role": "system", "content": initial_analysis_prompt}], temperature=args.temperature)
     initial_analysis_overview = initial_response.choices[0].message['content'].strip()
     print(Fore.CYAN + initial_analysis_overview + Style.RESET_ALL + "\n")
@@ -184,11 +194,22 @@ def main():
             valid_filter = False
             while not valid_filter:
                 filter_name = get_user_input("Enter custom filter name (e.g., diameter.cmd.code): ")
+                if filter_name.lower() in ["quit", "q", "bye"]:
+                    print("Exiting filter selection.")
+                    break  # Exit the filter input loop
                 filter_value = get_user_input(f"Enter value for {filter_name}: ")
+                if filter_value.lower() in ["quit", "q", "bye"]:
+                    print("Exiting filter selection.")
+                    break  # Exit the filter input loop
+
                 tshark_filter = f"{filter_name} == {filter_value}"
                 valid_filter = is_valid_tshark_filter(args.pcap, tshark_filter)
                 if not valid_filter:
                     print(Fore.RED + "Invalid filter. Please try again." + Style.RESET_ALL)
+
+            if filter_name.lower() in ["quit", "q", "bye"] or filter_value.lower() in ["quit", "q", "bye"]:
+                continue  # Return to the main menu
+
             current_pcap_text = filtered_pcap_to_txt(args.pcap, filter_name, filter_value)
 			
         elif filter_type != "None":
@@ -217,11 +238,16 @@ def main():
                 prompt_index = int(prompt_choice.strip()) - 1
                 if 0 <= prompt_index < len(prompts):
                     chosen_prompt = prompts[prompt_index].split(':')[1].strip()
-                    combined_prompt = f"{chosen_prompt} focusing on {filter_type} {filter_value}: {current_pcap_text}"
-            else:
-                combined_prompt = f"{prompt_choice} focusing on {filter_type} {filter_value}: {current_pcap_text}"
-
-            print(combined_prompt)
+                    if filter_type != "None":
+                        combined_prompt = f"{chosen_prompt} focusing on {filter_type} {filter_value}: {current_pcap_text}"
+                    else:
+                        combined_prompt = f"{chosen_prompt}: {current_pcap_text}"
+                else:
+                    if filter_type != "None":
+                        combined_prompt = f"{prompt_choice} focusing on {filter_type} {filter_value}: {current_pcap_text}"
+                    else:
+                        combined_prompt = f"{prompt_choice}: {current_pcap_text}"
+				
             messages = [{"role": "user", "content": combined_prompt}]
             response = openai.ChatCompletion.create(model=args.model, messages=messages, temperature=args.temperature)
             reply = response.choices[0].message['content']
