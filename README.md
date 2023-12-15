@@ -38,6 +38,12 @@ To end the interactive chat session, use the commands bye, quit, q, or the keybo
 
 For sample PCAP files, visit https://wiki.wireshark.org/SampleCaptures
 
+## Token Limit and PCAP Trimming:
+Patagontrace defaults to using the cost-effective and efficient GPT-3.5-turbo model. See more information: https://platform.openai.com/docs/models
+GPT-3.5-turbo has a token limit of 4093 tokens.
+PCAP files exceeding 7000 characters are trimmed to stay within the token limit.
+
+
 ### Data Confidentiality
 This tool utilizes OpenAI's ChatGPT for processing and analysis. Please be cautious and avoid sharing any sensitive or personal information. For detailed information, refer to OpenAI's privacy policy.
 
